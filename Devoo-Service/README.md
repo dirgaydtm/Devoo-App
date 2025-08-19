@@ -1,5 +1,17 @@
 # Devoo-Service
 
-Devoo-Service provides the backend for the ChatApp application. This project is still in its initial setup phase and will be developed further.
+Devoo-Service provides the backend for the ChatApp application. This project is still in development.
 
-<img src="https://skillicons.dev/icons?i=ts,mongo,express,nodejs" />
+<div align="center">
+  <img src="https://skillicons.dev/icons?i=ts,mongo,express,nodejs" alt="Tech Stack" />
+</div>
+
+## 🛠️ Tech Stack
+
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Language**: TypeScript
+- **Database**: MongoDB
+- **Authentication**: JWT & bcrypt
+- **Real-time Communication**: Socket.IO (coming soon)
+
