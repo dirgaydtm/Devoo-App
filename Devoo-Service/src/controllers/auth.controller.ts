@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/user.model";
-import { generateJwt } from "../lib/utils";
+import { generateJWT } from "../lib/utils";
 
 export const signup = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -31,7 +31,7 @@ export const signup = async (req: Request, res: Response) => {
 
     if (newUser) {
       //genarate jwt
-      generateJwt(newUser._id.toString(), res);
+      generateJWT(newUser._id.toString(), res);
       await newUser.save();
       res.status(201).json({
         _id: newUser._id,
@@ -44,16 +44,44 @@ export const signup = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.log(
-      "Error during signup:",
-      error instanceof Error ? error.message : "Unknown error occurred"
+      "Error in signup controller:",
+      error instanceof Error ? error.message : error
     );
     res.status(500).json({ message: "Internal server error." });
   }
 };
 
-export const login = (req: Request, res: Response) => {
-  res.send("login route");
+export const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credential." });
+    }
+
+    await bcrypt.compare(password, user.password).then((isMatch: boolean) => {
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credential." });
+      }
+    });
+    // Generate JWT
+    generateJWT(user._id.toString(), res);
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.log(
+      "Error in login controller:",
+      error instanceof Error ? error.message : error
+    );
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
+
 export const logout = (req: Request, res: Response) => {
-  res.send("logout route");
+
 };
