@@ -29,7 +29,7 @@ export const protectRoute = async (
       return res.status(404).json({ message: "User Not Found" });
     }
 
-    (req as any).user = user;
+    req.user = { ...user.toObject(), _id: user._id.toString() };
     next();
   } catch (error) {
     console.log(
