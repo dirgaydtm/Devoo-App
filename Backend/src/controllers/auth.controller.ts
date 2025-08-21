@@ -99,10 +99,7 @@ export const logout = (req: Request, res: Response) => {
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { profilePicture, username } = req.body;
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    const userId = req.user._id;
+    const userId = req.user?._id;
 
     if (!profilePicture && !username) {
       return res.status(400).json({ message: "Nothing to update." });
