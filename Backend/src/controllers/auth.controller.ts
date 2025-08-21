@@ -136,7 +136,7 @@ export const updateProfile = async (req: Request, res: Response) => {
 
 export const cheackAuth = (req: Request, res: Response) => {
   try {
-    res.status(200).json({ user: req.user });
+    res.status(200).json(req.user);
   } catch (error) {
     console.log(
       "Error in cheackAuth controller:",
