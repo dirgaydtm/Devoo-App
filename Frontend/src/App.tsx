@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom"
-import SignUp from "./pages/SignUpLogIn"
+import Auth from "./pages/Auth"
 import Home from "./pages/Home"
 import Settings from "./pages/Settings"
 import Profile from "./pages/Profile"
@@ -26,10 +26,10 @@ const App = () => {
   return (
     <div>
       <Routes>
-        <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
-        <Route path="/signup" element={!authUser ? <SignUp /> : <Navigate to="/" />} />
+        <Route path="/" element={authUser ? <Home /> : <Navigate to="/auth" />} />
+        <Route path="/auth" element={!authUser ? <Auth /> : <Navigate to="/" />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login" />} />
+        <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/auth" />} />
       </Routes>
 
       <Toaster />

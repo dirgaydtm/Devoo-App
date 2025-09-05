@@ -9,7 +9,7 @@ import {
     MessageSquare,
     User,
 } from "lucide-react";
-import SignUpAnimation from "../components/SignUpAnimation";
+import SignUpAnimation from "../components/authAnimation";
 import toast from "react-hot-toast";
 
 const SignUp = () => {
@@ -26,15 +26,14 @@ const SignUp = () => {
         setFormData({ username: "", email: "", password: "" });
         setOnLogin((prev) => !prev);
     };
-    const { login, isLoggingIn } = useAuthStore();
-
-    const { signUp, isSigningUp } = useAuthStore();
+    const { login, isLoggingIn, signup, isSigningUp } = useAuthStore();
 
     const validateFormSignUp = () => {
         if (!formData.username.trim()) return toast.error("Username is Required");
         if (!formData.email.trim()) return toast.error("Email is Required");
         if (!/\S+@\S+\.\S+/.test(formData.email)) return toast.error("Email is Invalid");
         if (!formData.password.trim()) return toast.error("Password is Required");
+        if (formData.password.length < 8) return toast.error("Password must be at least 8 characters");
 
         return true
     };
@@ -57,7 +56,7 @@ const SignUp = () => {
                 login(formData);
             } else {
                 // Sign up logic
-                signUp(formData);
+                signup(formData);
             }
         }
     };
@@ -107,7 +106,7 @@ const SignUp = () => {
 
                             {/* PASSWORD */}
                             <div className="form-control mb-6">
-                                <label className="input w-full">
+                                <label className="input validator w-full">
                                     <LockKeyhole className="size-5 text-base-content/40" />
                                     <input
                                         type={showPassword ? "text" : "password"}
@@ -131,6 +130,7 @@ const SignUp = () => {
                                     </button>
                                 </label>
                             </div>
+
 
                             <button
                                 type="submit"
