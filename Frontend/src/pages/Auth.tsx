@@ -3,7 +3,6 @@ import { useAuthStore } from "../store/useAuthStore";
 import {
     Eye,
     EyeOff,
-    Loader2,
     LockKeyhole,
     Mail,
     MessageSquare,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 import SignUpAnimation from "../components/authAnimation";
 import toast from "react-hot-toast";
+import { Tailspin } from "ldrs/react";
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -139,7 +139,7 @@ const SignUp = () => {
                             >
                                 {isLoggingIn ? (
                                     <>
-                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        <Tailspin />
                                         Loading...
                                     </>
                                 ) : (
@@ -263,7 +263,7 @@ const SignUp = () => {
                             >
                                 {isSigningUp ? (
                                     <>
-                                        <Loader2 className="size-5 animate-spin" />
+                                        <Tailspin />
                                         Loading...
                                     </>
                                 ) : (

@@ -5,8 +5,8 @@ import Settings from "./pages/Settings"
 import Profile from "./pages/Profile"
 import { useAuthStore } from "./store/useAuthStore"
 import { useEffect } from "react"
-import { LoaderPinwheel } from "lucide-react"
 import { Toaster } from "react-hot-toast"
+import { Trio } from "ldrs/react"
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -19,7 +19,7 @@ const App = () => {
 
   if (isCheckingAuth && !authUser) {
     return <div className="flex items-center justify-center h-screen">
-      <LoaderPinwheel className="size-20 animate-spin" />
+      <Trio size="150"/>
     </div>
   }
 
