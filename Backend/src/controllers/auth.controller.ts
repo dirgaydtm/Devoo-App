@@ -101,13 +101,15 @@ export const updateProfile = async (req: Request, res: Response) => {
     const { profilePicture, username } = req.body;
     const userId = req.user?._id;
 
-    if (!profilePicture && !username) {
+    if (!profilePicture && !username && profilePicture !== "") {
       return res.status(400).json({ message: "Nothing to update." });
     }
 
     const updateData: { profilePicture?: string; username?: string } = {};
 
-    if (profilePicture) {
+    if (profilePicture === "") {
+      updateData.profilePicture = ""; // atau undefined, sesuai model
+    } else if (profilePicture) {
       // Upload to Cloudinary
       const uploadResult = await cloudinary.uploader.upload(profilePicture);
       updateData.profilePicture = uploadResult.secure_url;
