@@ -3,27 +3,24 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 
-interface User {
-  id: string;
-  username: string;
-  email: string;
-}
-interface data {
+interface UserData {
   username?: string;
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
+  profilePicture?: string;
+  createdAt?: string;
 }
-
 interface AuthStore {
-  authUser: User | null;
+  authUser: UserData | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
   checkAuth: () => Promise<void>;
-  signup: (data: data) => Promise<void>;
+  signup: (data: UserData) => Promise<void>;
   logout: () => Promise<void>;
-  login: (data: data) => Promise<void>;
+  login: (data: UserData) => Promise<void>;
+  updateProfile: (data: UserData) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -46,7 +43,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  signup: async (data: data) => {
+  signup: async (data: UserData) => {
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
@@ -72,7 +69,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
     }
   },
-  login: async (data: data) => {
+  login: async (data: UserData) => {
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
@@ -84,6 +81,19 @@ export const useAuthStore = create<AuthStore>((set) => ({
     } finally {
       set({ isLoggingIn: false });
     }
+  },
 
+     updateProfile: async (data: UserData) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      set({ authUser: res.data.updatedUser });
+      toast.success("Profile updated successfully");
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      toast.error(error.response?.data?.message || "Error updating profile");
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
   }
-}))
+}))    
