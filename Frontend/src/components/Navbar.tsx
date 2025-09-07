@@ -6,7 +6,7 @@ const Navbar = () => {
   const { logout } = useAuthStore();
 
   return (
-    <div className="navbar bg-base-100 border-b border-base-300 px-15 fixed w-full top-0 z-40 
+    <div className="navbar bg-base-100 border-b border-base-300 sm:px-15 fixed w-full top-0 z-40 
     backdrop-blur-lg">
 
       <div className="navbar-start">
