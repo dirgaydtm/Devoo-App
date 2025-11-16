@@ -12,29 +12,12 @@ import {
     or,
     and,
     limit,
-    Timestamp,
 } from "firebase/firestore";
 
 import { db } from "../lib/firebase";
 import { validateMessage } from "../lib/validation";
+import type { Message, User } from "../types/global";
 import { useAuthStore } from "./useAuthStore";
-
-interface Message {
-    id?: string;
-    senderId: string;
-    receiverId: string;
-    text: string;
-    image?: string;
-    createdAt: Timestamp | Date | null;
-}
-
-interface User {
-    id: string;
-    username: string;
-    email: string;
-    profilePicture?: string;
-    createdAt?: Timestamp | Date | null;
-}
 
 interface ChatStore {
     messages: Message[];

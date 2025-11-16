@@ -12,7 +12,6 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
-  Timestamp,
 } from "firebase/firestore";
 
 import { auth, db } from "../lib/firebase";
@@ -21,17 +20,7 @@ import {
   validatePassword,
   validateUsername,
 } from "../lib/validation";
-
-interface UserData {
-  id?: string;
-  username?: string;
-  email?: string;
-  password?: string;
-  profilePicture?: string;
-  createdAt?: Timestamp;
-}
-
-export type { UserData };
+import type { UserData } from "../types/global";
 
 interface AuthStore {
   authUser: UserData | null;
@@ -44,6 +33,8 @@ interface AuthStore {
   login: (data: UserData) => Promise<void>;
   updateProfile: (data: UserData) => Promise<void>;
 }
+
+export type { UserData };
 
 export const useAuthStore = create<AuthStore>((set) => ({
   authUser: null,
