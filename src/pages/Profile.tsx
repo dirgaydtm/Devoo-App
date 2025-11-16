@@ -1,10 +1,11 @@
-import { THEMES } from "../constants/themes"
-import { useAuthStore } from "../store/useAuthStore"
-import { useThemeStore } from "../store/useThemeStore"
-import { Send, Mail, PencilIcon, Trash2, User } from "lucide-react"
-import { useState, useEffect } from "react"
-import InitialAvatar from "../components/InitialAvatar"
-import Navbar from "../components/Navbar"
+import { THEMES } from "../constants/themes";
+import { useAuthStore } from "../store/useAuthStore";
+import { useThemeStore } from "../store/useThemeStore";
+import { Send, Mail, PencilIcon, Trash2, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import InitialAvatar from "../components/InitialAvatar";
+import Navbar from "../components/Navbar";
+import { Timestamp } from "firebase/firestore";
 
 const PREVIEW_MESSAGES = [
   { id: 1, content: "Hey! How's it going?", isSent: false },
@@ -141,7 +142,9 @@ const Profile = () => {
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
                 <span>Member Since</span>
-                <span>{new Date(authUser?.createdAt?.toMillis() ?? 0).toLocaleDateString()}</span>
+                <span>
+                  {(authUser?.createdAt as Timestamp).toDate().toLocaleDateString()}
+                </span>
               </div>
               <div className="flex items-center justify-between py-2">
                 <span>Account Status</span>
