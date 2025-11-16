@@ -16,6 +16,11 @@ import {
 } from "firebase/firestore";
 
 import { auth, db } from "../lib/firebase";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "../lib/validation";
 
 interface UserData {
   id?: string;
@@ -47,14 +52,33 @@ export const useAuthStore = create<AuthStore>((set) => ({
   isUpdatingProfile: false,
   isCheckingAuth: true,
 
+  // Signup Action
   signup: async (data: UserData) => {
     set({ isSigningUp: true });
     try {
+      // Validate input
+      if (!data.email || !data.password || !data.username) {
+        throw new Error("Email, password, and username are required");
+      }
+
+      const emailError = !validateEmail(data.email)
+        ? "Invalid email format"
+        : null;
+      if (emailError) throw new Error(emailError);
+
+      const passwordError = validatePassword(data.password);
+      if (passwordError) throw new Error(passwordError);
+
+      const usernameError = validateUsername(data.username);
+      if (usernameError) throw new Error(usernameError);
+
+      console.log("Validating signup input... OK");
+
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        data.email!,
-        data.password!
+        data.email,
+        data.password
       );
 
       // Update display name in Firebase Auth
@@ -92,11 +116,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
+  // Logout Action
   logout: async () => {
     try {
+      console.log("Logging out...");
       await signOut(auth);
       set({ authUser: null });
       toast.success("Logged out successfully");
+      console.log("Logout successful!");
     } catch (error: unknown) {
       console.error("Error logging out:", error);
       const errorMessage =
@@ -105,11 +132,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
+  // Login Action
   login: async (data: UserData) => {
     set({ isLoggingIn: true });
     try {
+      // Validate input
+      if (!data.email || !data.password) {
+        throw new Error("Email and password are required");
+      }
+
+      const emailError = !validateEmail(data.email)
+        ? "Invalid email format"
+        : null;
+      if (emailError) throw new Error(emailError);
+
+      console.log("Validating login input... OK");
       console.log("Attempting login...");
-      await signInWithEmailAndPassword(auth, data.email!, data.password!);
+
+      await signInWithEmailAndPassword(auth, data.email, data.password);
       console.log("Login successful!");
       toast.success("Logged in successfully");
     } catch (error: unknown) {
@@ -124,11 +164,20 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
+  // Update Profile Action
   updateProfile: async (data: UserData) => {
     set({ isUpdatingProfile: true });
     try {
       const currentUser = auth.currentUser;
       if (!currentUser) throw new Error("No user logged in");
+
+      // Validate username if provided
+      if (data.username) {
+        const usernameError = validateUsername(data.username);
+        if (usernameError) throw new Error(usernameError);
+      }
+
+      console.log("Validating profile update input... OK");
 
       // Get current user data from Firestore
       const userDocRef = doc(db, "users", currentUser.uid);
@@ -143,6 +192,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
         data.profilePicture &&
         data.profilePicture.startsWith("data:image")
       ) {
+        console.log("Uploading profile picture to Cloudinary...");
         const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
         const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
@@ -160,6 +210,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
         const cloudinaryData = await response.json();
         profilePictureURL = cloudinaryData.secure_url;
+        console.log("Profile picture uploaded successfully!");
       }
 
       // Prepare update data - only include defined values
