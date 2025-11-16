@@ -4,27 +4,28 @@ import Home from "./pages/Home"
 import Settings from "./pages/Settings"
 import Profile from "./pages/Profile"
 import { useAuthStore } from "./store/useAuthStore"
+import { setupAuthListener } from "./lib/auth"
 import { useEffect } from "react"
 import { Toaster } from "react-hot-toast"
 import { Trio } from "ldrs/react"
+import { useThemeStore } from "./store/useThemeStore"
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, isCheckingAuth } = useAuthStore();
+  const { theme } = useThemeStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  console.log(authUser);
+    setupAuthListener();
+  }, []);
 
   if (isCheckingAuth && !authUser) {
     return <div className="flex items-center justify-center h-screen">
-      <Trio size="150"/>
+      <Trio size="150" />
     </div>
   }
 
   return (
-    <div>
+    <div data-theme={theme}>
       <Routes>
         <Route path="/" element={authUser ? <Home /> : <Navigate to="/auth" />} />
         <Route path="/auth" element={!authUser ? <Auth /> : <Navigate to="/" />} />

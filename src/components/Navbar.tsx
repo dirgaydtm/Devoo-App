@@ -1,4 +1,4 @@
-import { CircleUserRound, EllipsisVertical, LogOut, Settings } from 'lucide-react';
+import { CircleUserRound, EllipsisVertical, Home, LogOut } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { Link } from 'react-router-dom';
 
@@ -6,7 +6,7 @@ const Navbar = () => {
   const { logout } = useAuthStore();
 
   return (
-    <div className="navbar bg-base-100 border-b border-base-300 sm:px-15 fixed w-full top-0 z-40 
+    <div className="navbar bg-base-100 border-b border-base-300 sm:px-15 w-full
     backdrop-blur-lg">
 
       <div className="navbar-start">
@@ -15,11 +15,11 @@ const Navbar = () => {
       <div className="navbar-end">
         <div className='hidden sm:inline-flex gap-2'>
           <Link
-            to={"/settings"}
+            to={"/"}
             className="btn btn-primary btn-ghost"
           >
-            <Settings />
-            <span className="inline">Settings</span>
+            <Home />
+            <span className="inline">Home</span>
           </Link>
           <Link to={"/profile"} className="btn btn-primary btn-ghost">
             <CircleUserRound />
@@ -40,12 +40,6 @@ const Navbar = () => {
           <ul
             tabIndex={0}
             className="menu menu-md dropdown-content bg-base-100 rounded-box z-1 mt-3 p-2 shadow">
-            <li>
-              <Link to={"/settings"}>
-                <Settings />Settings
-              </Link>
-
-            </li>
             <li>
               <Link to={"/profile"}>
                 <CircleUserRound />Profile

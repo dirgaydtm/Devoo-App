@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read user profiles
+      allow read: if true;
+      
+      // Users can create their own profile (first time signup)
+      allow create: if request.auth != null;
+      
+      // Users can only update their own profile
+      allow update: if request.auth != null && request.auth.uid == userId;
+      
+      // No one can delete users
+      allow delete: if false;
+    }
+    
+    // Messages collection
+    match /messages/{messageId} {
+      // Users can read messages where they are sender or receiver
+      allow read: if request.auth != null && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.receiverId == request.auth.uid
+      );
+      
+      // Users can create messages where they are the sender
+      allow create: if request.auth != null && 
+        request.resource.data.senderId == request.auth.uid;
+      
+      // No one can update or delete messages
+      allow update, delete: if false;
+    }
+  }
+}
