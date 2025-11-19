@@ -1,6 +1,6 @@
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
-const SIgnUpAnimation = () => {
+const AuthAnimation = () => {
     return (
         <DotLottieReact
             src="/Login.lottie"
@@ -10,4 +10,4 @@ const SIgnUpAnimation = () => {
     )
 }
 
-export default SIgnUpAnimation
+export default AuthAnimation
