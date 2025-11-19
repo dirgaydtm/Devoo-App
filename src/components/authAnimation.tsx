@@ -3,7 +3,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 const SIgnUpAnimation = () => {
     return (
         <DotLottieReact
-            src="/src/assets/Login.lottie"
+            src="/Login.lottie"
             loop
             autoplay
         />
