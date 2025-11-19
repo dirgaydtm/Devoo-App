@@ -6,8 +6,8 @@ import { useAuthStore } from "./store/useAuthStore"
 import { setupAuthListener } from "./lib/auth"
 import { useEffect } from "react"
 import { Toaster } from "react-hot-toast"
-import { Trio } from "ldrs/react"
 import { useThemeStore } from "./store/useThemeStore"
+import Loader from "./components/Loader"
 
 const App = () => {
   const { authUser, isCheckingAuth } = useAuthStore();
@@ -19,7 +19,7 @@ const App = () => {
 
   if (isCheckingAuth && !authUser) {
     return <div className="flex items-center justify-center h-screen">
-      <Trio size="150" />
+      <Loader />
     </div>
   }
 
