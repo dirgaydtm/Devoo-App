@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { Eye, EyeOff, LockKeyhole, Mail, MessageSquare } from "lucide-react";
+import OAuthButtons from "./OAuthButtons";
 
 interface LoginFormProps {
     onSwitchToSignup: () => void;
@@ -20,7 +21,7 @@ const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
     const iconClass = "size-5 text-base-content/40";
 
     return (
-        <div className="w-xs md:w-md space-y-10">
+        <div className="w-xs md:w-md space-y-6">
             {/* Logo */}
             <div className="flex flex-col items-center gap-1 text-center">
                 <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -67,6 +68,9 @@ const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
                     )}
                 </button>
             </form>
+
+            {/* OAuth Buttons */}
+            <OAuthButtons />
 
             {/* Switch to Signup */}
             <p className="text-center text-sm text-base-content/60">

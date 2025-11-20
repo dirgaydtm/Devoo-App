@@ -5,6 +5,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile as firebaseUpdateProfile,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import {
   doc,
@@ -31,6 +34,8 @@ interface AuthStore {
   signup: (data: UserData) => Promise<void>;
   logout: () => Promise<void>;
   login: (data: UserData) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithGithub: () => Promise<void>;
   updateProfile: (data: UserData) => Promise<void>;
 }
 
@@ -254,6 +259,128 @@ export const useAuthStore = create<AuthStore>((set) => ({
       toast.error(errorMessage);
     } finally {
       set({ isUpdatingProfile: false });
+    }
+  },
+
+  // Login with Google
+  loginWithGoogle: async () => {
+    set({ isLoggingIn: true });
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user document exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      // If new user, create document
+      if (!userDoc.exists()) {
+        const userData = {
+          id: user.uid,
+          email: user.email || "",
+          username: user.displayName || user.email?.split("@")[0] || "User",
+          profilePicture: user.photoURL || "",
+          createdAt: serverTimestamp(),
+        };
+
+        await setDoc(userDocRef, userData);
+
+        // Set auth user in store
+        set({
+          authUser: {
+            id: user.uid,
+            email: userData.email,
+            username: userData.username,
+            profilePicture: userData.profilePicture,
+          },
+        });
+
+        toast.success("Account created successfully!");
+      } else {
+        // Get existing user data
+        const existingUserData = userDoc.data() as UserData;
+
+        // Set auth user in store
+        set({
+          authUser: {
+            id: user.uid,
+            ...existingUserData,
+          },
+        });
+
+        toast.success("Logged in successfully");
+      }
+    } catch (error: unknown) {
+      console.error("Error logging in with Google:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to login with Google";
+      toast.error(errorMessage);
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  // Login with GitHub
+  loginWithGithub: async () => {
+    set({ isLoggingIn: true });
+    try {
+      const provider = new GithubAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user document exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      // If new user, create document
+      if (!userDoc.exists()) {
+        const userData = {
+          id: user.uid,
+          email: user.email || "",
+          username: user.displayName || user.email?.split("@")[0] || "User",
+          profilePicture: user.photoURL || "",
+          createdAt: serverTimestamp(),
+        };
+
+        await setDoc(userDocRef, userData);
+
+        // Set auth user in store
+        set({
+          authUser: {
+            id: user.uid,
+            email: userData.email,
+            username: userData.username,
+            profilePicture: userData.profilePicture,
+          },
+        });
+
+        toast.success("Account created successfully!");
+      } else {
+        // Get existing user data
+        const existingUserData = userDoc.data() as UserData;
+
+        // Set auth user in store
+        set({
+          authUser: {
+            id: user.uid,
+            ...existingUserData,
+          },
+        });
+
+        toast.success("Logged in successfully");
+      }
+    } catch (error: unknown) {
+      console.error("Error logging in with GitHub:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to login with GitHub";
+      toast.error(errorMessage);
+    } finally {
+      set({ isLoggingIn: false });
     }
   },
 }));
