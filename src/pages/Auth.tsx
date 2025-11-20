@@ -13,14 +13,26 @@ const Auth = () => {
     };
 
     return (
-        <div className="h-screen flex justify-center items-center bg-base-300">
+        <div className="h-screen flex justify-center items-center bg-base-300 relative overflow-hidden">
             {/* LOGIN FORM */}
-            <div className={`flex flex-col overflow-hidden justify-center items-center duration-700 ease-in-out ${isLogin ? "lg:flex-6" : " hidden lg:flex lg:flex-4"}`}>
+            <div
+                className={`flex flex-col justify-center items-center transition-all duration-700 ease-in-out absolute lg:relative
+                    ${isLogin
+                        ? "opacity-100 translate-x-0 lg:flex-6 pointer-events-auto"
+                        : "opacity-0 -translate-x-full lg:translate-x-0 lg:opacity-100 lg:flex-4 pointer-events-none lg:pointer-events-auto"
+                    }`}
+            >
                 <LoginForm onSwitchToSignup={handleSwitchMode} />
             </div>
 
             {/* SIGNUP FORM */}
-            <div className={`flex flex-col overflow-hidden justify-center items-center duration-700 ease-in-out ${isLogin ? "hidden lg:flex lg:flex-4" : "lg:flex-6"}`}>
+            <div
+                className={`flex flex-col justify-center items-center transition-all duration-700 ease-in-out absolute lg:relative
+                    ${isLogin
+                        ? "opacity-0 translate-x-full lg:translate-x-0 lg:opacity-100 lg:flex-4 pointer-events-none lg:pointer-events-auto"
+                        : "opacity-100 translate-x-0 lg:flex-6 pointer-events-auto"
+                    }`}
+            >
                 <SignupForm onSwitchToLogin={handleSwitchMode} />
             </div>
 
