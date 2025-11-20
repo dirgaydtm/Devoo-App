@@ -1,6 +1,7 @@
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { memo } from 'react';
 
-const AuthAnimation = () => {
+const AuthAnimation = memo(() => {
     return (
         <DotLottieReact
             src="/Login.lottie"
@@ -8,6 +9,6 @@ const AuthAnimation = () => {
             autoplay
         />
     )
-}
+});
 
-export default AuthAnimation
+export default AuthAnimation;
