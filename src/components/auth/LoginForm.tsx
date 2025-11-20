@@ -14,7 +14,7 @@ const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        login(formData);
+        await login(formData);
     };
 
     const inputClass = "input validator outline-0 shadow-none border-0 border-b w-full";
@@ -53,7 +53,7 @@ const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                    <button type="button" onClick={() => setShowPassword((prev) => !prev)}>
                         {showPassword ? <Eye className={iconClass} /> : <EyeOff className={iconClass} />}
                     </button>
                 </label>
