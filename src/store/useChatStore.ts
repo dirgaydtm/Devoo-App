@@ -19,17 +19,24 @@ import { validateMessage } from "../lib/validation";
 import type { Message, User } from "../types/global";
 import { useAuthStore } from "./useAuthStore";
 
+let usersUnsubscribe: (() => void) | null = null;
+let messagesUnsubscribe: (() => void) | null = null;
+
 interface ChatStore {
     messages: Message[];
     users: User[];
     selectedUser: User | null;
     isUsersLoading: boolean;
     isMessagesLoading: boolean;
+    isSendingMessage: boolean;
 
     getUsers: () => Promise<void>;
+    subscribeToUsers: () => (() => void) | null;
     subscribeToMessages: (userId: string) => (() => void) | null;
     sendMessage: (messageData: { text?: string; image?: string }) => Promise<void>;
     setSelectedUser: (user: User | null) => void;
+    startUsersListener: () => void;
+    stopUsersListener: () => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -38,6 +45,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
+    isSendingMessage: false,
 
     // Get Users Action
     getUsers: async () => {
@@ -70,6 +78,53 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             toast.error(errorMessage);
         } finally {
             set({ isUsersLoading: false });
+        }
+    },
+
+    // Subscribe to Users (Real-time)
+    subscribeToUsers: (): (() => void) | null => {
+        const authUser = useAuthStore.getState().authUser;
+
+        if (!authUser) {
+            console.warn("No authenticated user for subscribeToUsers");
+            return null;
+        }
+
+        set({ isUsersLoading: true });
+
+        try {
+            console.log("Subscribing to users updates...");
+            const usersQuery = query(collection(db, "users"));
+
+            const unsubscribe = onSnapshot(
+                usersQuery,
+                (snapshot) => {
+                    const users: User[] = [];
+                    snapshot.forEach((doc) => {
+                        // Exclude current user from list
+                        if (doc.id !== authUser.id) {
+                            users.push({ id: doc.id, ...doc.data() } as User);
+                        }
+                    });
+
+                    console.log(`Real-time users update: ${users.length} users`);
+                    set({ users, isUsersLoading: false });
+                },
+                (error) => {
+                    console.error("Error in users subscription:", error);
+                    toast.error("Error loading users updates");
+                    set({ isUsersLoading: false });
+                }
+            );
+
+            return unsubscribe;
+        } catch (error: unknown) {
+            console.error("Error subscribing to users:", error);
+            const errorMessage =
+                error instanceof Error ? error.message : "Error subscribing to users";
+            toast.error(errorMessage);
+            set({ isUsersLoading: false });
+            return null;
         }
     },
 
@@ -148,8 +203,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         }
 
         try {
+            set({ isSendingMessage: true });
             // Validate message content - at least one of text or image should exist
-            const hasText = messageData.text && messageData.text.trim().length > 0;
+            const trimmedText = messageData.text?.trim();
+            const hasText = !!trimmedText && trimmedText.length > 0;
             const hasImage = messageData.image && messageData.image.length > 0;
 
             if (!hasText && !hasImage) {
@@ -157,8 +214,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             }
 
             // Validate text if present
-            if (messageData.text) {
-                const textError = validateMessage(messageData.text);
+            if (trimmedText) {
+                const textError = validateMessage(trimmedText);
                 if (textError) throw new Error(textError);
             }
 
@@ -168,7 +225,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             await addDoc(collection(db, "messages"), {
                 senderId: authUser.id,
                 receiverId: selectedUser.id,
-                text: messageData.text || "",
+                text: trimmedText || "",
                 image: messageData.image || "",
                 createdAt: serverTimestamp(),
             });
@@ -179,11 +236,68 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                 error instanceof Error ? error.message : "Error sending message";
             toast.error(errorMessage);
         }
+        finally {
+            set({ isSendingMessage: false });
+        }
     },
 
     // Set Selected User Action
     setSelectedUser: (user: User | null) => {
         console.log(`Selected user: ${user?.username || "none"}`);
-        set({ selectedUser: user });
+
+        if (messagesUnsubscribe) {
+            messagesUnsubscribe();
+            messagesUnsubscribe = null;
+        }
+
+        if (!user) {
+            set({ selectedUser: null, messages: [], isMessagesLoading: false });
+            return;
+        }
+
+        if (!user.id) {
+            console.warn("Selected user is missing an id, skipping subscription");
+            set({ selectedUser: user, messages: [], isMessagesLoading: false });
+            return;
+        }
+
+        set({ selectedUser: user, messages: [], isMessagesLoading: true });
+        const unsubscribe = get().subscribeToMessages(user.id);
+        if (unsubscribe) {
+            messagesUnsubscribe = unsubscribe;
+        }
     },
+
+    startUsersListener: () => {
+        if (usersUnsubscribe) return;
+        const unsubscribe = get().subscribeToUsers();
+        if (unsubscribe) {
+            usersUnsubscribe = unsubscribe;
+        }
+    },
+
+    stopUsersListener: () => {
+        if (usersUnsubscribe) {
+            usersUnsubscribe();
+            usersUnsubscribe = null;
+        }
+        set({ users: [], isUsersLoading: false });
+    },
+
 }));
+
+let previousAuthUserId: string | undefined;
+
+useAuthStore.subscribe((state) => {
+    const authUserId = state.authUser?.id;
+    const { startUsersListener, stopUsersListener, setSelectedUser } = useChatStore.getState();
+
+    if (authUserId && authUserId !== previousAuthUserId) {
+        startUsersListener();
+    } else if (!authUserId && previousAuthUserId) {
+        stopUsersListener();
+        setSelectedUser(null);
+    }
+
+    previousAuthUserId = authUserId;
+});
