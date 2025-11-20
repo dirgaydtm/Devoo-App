@@ -1,5 +1,5 @@
 import { CircleUserRound, EllipsisVertical, Home, LogOut } from 'lucide-react';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore } from '../../store/useAuthStore';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
