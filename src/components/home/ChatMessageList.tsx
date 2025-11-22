@@ -55,7 +55,16 @@ const ChatMessageList = ({ messages, isLoading, authUserId }: ChatMessageListPro
                                     crossOrigin="anonymous"
                                 />
                             )}
-                            {message.text && <p className="wrap-break-word">{message.text}</p>}
+                            {message.text && (
+                                <p className="wrap-break-word">
+                                    {message.text.split('\n').map((line, idx) => (
+                                        <span key={idx}>
+                                            {line}
+                                            <br />
+                                        </span>
+                                    ))}
+                                </p>
+                            )}
                             <p
                                 className={`text-xs mt-1 ${isSent ? "text-primary-content/70" : "text-base-content/60"
                                     }`}
