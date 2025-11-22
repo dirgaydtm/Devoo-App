@@ -32,5 +32,20 @@ service cloud.firestore {
       // No one can update or delete messages
       allow update, delete: if false;
     }
+    
+    // Contacts collection
+    match /contacts/{userId}/contacts/{contactId} {
+      // Users can only read their own contacts
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // Users can only add contacts to their own contacts list
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // No one can update contacts
+      allow update: if false;
+      
+      // Users can delete their own contacts
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }

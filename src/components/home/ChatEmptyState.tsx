@@ -16,19 +16,22 @@ const ChatEmptyState = ({ users, isUsersLoading, onSelectUser }: ChatEmptyStateP
             <p className="text-sm text-base-content/60">Choose someone to start chatting</p>
         </div>
 
-        <div className="w-full min-h-fit md:hidden">
+        <div className="w-full min-h-fit">
             {isUsersLoading ? (
                 <div className="flex items-center justify-center py-4">
                     <Loader className="w-5 h-5 animate-spin" />
                 </div>
             ) : users.length === 0 ? (
-                <p className="text-sm text-base-content/50">Belum ada pengguna lain yang online.</p>
+                    <div className="text-center flex-col">
+                        <p className="text-lg font-semibold mb-2">Select a user</p>
+                        <p className="text-sm text-base-content/60">Choose someone to start chatting</p>
+                    </div>
             ) : (
                 users.map((user) => (
                     <button
                         key={user.id}
                         onClick={() => onSelectUser(user)}
-                        className="w-full flex items-center gap-3 border-b border-base-200 backdrop-blur-xl p-3 text-left"
+                        className="w-full flex items-center gap-3 border-b border-base-200 md:hidden backdrop-blur-xl p-3 text-left"
                     >
                         {user.profilePicture ? (
                             <img
