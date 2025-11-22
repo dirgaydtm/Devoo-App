@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import { Timestamp } from "firebase/firestore";
-import { Send, Mail, PencilIcon, Trash2, User } from "lucide-react";
+import { Send, Mail, PencilIcon, Trash2, User, MenuIcon} from "lucide-react";
 import toast from "react-hot-toast";
 
 import InitialAvatar from "../components/InitialAvatar";
@@ -69,7 +69,7 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="drawer lg:drawer-open flex-1">
+      <div className="drawer flex-1 lg:drawer-open">
         <input
           id="sidebar-drawer"
           type="checkbox"
@@ -78,6 +78,7 @@ const Profile = () => {
           onChange={(e) => setSidebarOpen(e.target.checked)}
         />
         <div className="drawer-content flex flex-col">
+          <label htmlFor="sidebar-drawer" className="btn lg:hidden btn-ghost gap-2" ><MenuIcon /></label>
           <div className="flex-1 flex flex-col lg:flex-row gap-5 sm:p-10 overflow-y-auto">
             {/* profile */}
             <div className="flex-2 p-8 lg:bg-base-300 rounded-xl space-y-8">
@@ -280,6 +281,7 @@ const Profile = () => {
 
           </div>
         </div>
+
         <Sidebar />
       </div>
     </div>

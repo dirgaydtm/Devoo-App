@@ -2,6 +2,7 @@ import { Loader, CircleUserRound, LogOut, PanelRightOpen, HomeIcon, PanelRightCl
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useChatStore } from "../../store/useChatStore";
+import { useLayoutStore } from "../../store/useLayoutStore";
 import { getUserInitials } from "../../lib/user";
 
 const Sidebar = () => {
@@ -13,10 +14,17 @@ const Sidebar = () => {
         isUsersLoading,
         setSelectedUser,
     } = useChatStore();
+    const { setSidebarOpen } = useLayoutStore();
 
     const handleSelectUser = (user: typeof users[0]) => {
         setSelectedUser(user);
         navigate("/");
+    };
+
+    const handleGoHome = () => {
+        setSelectedUser(null);
+        navigate("/");
+        setSidebarOpen(false);
     };
 
     return (
@@ -28,18 +36,18 @@ const Sidebar = () => {
                     <div className="flex px-2 py-4 items-center justify-between w-full">
                         <span className="is-drawer-close:hidden font-semibold">Devoo</span>
                         <label htmlFor="sidebar-drawer"
-                            className="is-drawer-close:hidden flex items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 "
+                            className="is-drawer-close:hidden hidden items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 md:flex"
                         >
                             <PanelRightOpen />
                         </label>
                         <label htmlFor="sidebar-drawer"
-                            className="is-drawer-open:hidden flex items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 "
+                            className="is-drawer-open:hidden hidden items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 md:flex"
                         >
                             <PanelRightClose />
                         </label>
                     </div>
                     <li>
-                        <Link to="/" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Home">
+                        <Link to="/" onClick={handleGoHome} className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Home">
                             <div className="shrink-0">
                                 <div className="w-8 h-8 flex items-center justify-center text-primary-content">
                                     <HomeIcon className="w-6 h-6" />
