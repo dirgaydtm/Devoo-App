@@ -47,25 +47,3 @@ export const withServerTimestamp = (data: UserData) => ({
     createdAt: serverTimestamp(),
 });
 
-export const uploadProfilePictureIfNeeded = async (
-    profilePicture?: string,
-    fallback?: string
-) => {
-    if (!profilePicture) return fallback;
-    if (!profilePicture.startsWith("data:image")) return profilePicture;
-
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-    const formData = new FormData();
-    formData.append("file", profilePicture);
-    formData.append("upload_preset", uploadPreset);
-
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData,
-    });
-
-    const cloudinaryData = await response.json();
-    return cloudinaryData.secure_url as string;
-};

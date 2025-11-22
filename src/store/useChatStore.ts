@@ -22,6 +22,8 @@ import { useAuthStore } from "./useAuthStore";
 let usersUnsubscribe: (() => void) | null = null;
 let messagesUnsubscribe: (() => void) | null = null;
 
+import { uploadImage } from "../utils/image";
+
 interface ChatStore {
     messages: Message[];
     users: User[];
@@ -33,7 +35,7 @@ interface ChatStore {
     getUsers: () => Promise<void>;
     subscribeToUsers: () => (() => void) | null;
     subscribeToMessages: (userId: string) => (() => void) | null;
-    sendMessage: (messageData: { text?: string; image?: string }) => Promise<void>;
+    sendMessage: (messageData: { text?: string; imageFile?: File }) => Promise<void>;
     setSelectedUser: (user: User | null) => void;
     startUsersListener: () => void;
     stopUsersListener: () => void;
@@ -193,7 +195,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     },
 
     // Send Message Action
-    sendMessage: async (messageData: { text?: string; image?: string }) => {
+    sendMessage: async (messageData: { text?: string; imageFile?: File }) => {
         const { selectedUser } = get();
         const authUser = useAuthStore.getState().authUser;
 
@@ -207,9 +209,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
             // Validate message content - at least one of text or image should exist
             const trimmedText = messageData.text?.trim();
             const hasText = !!trimmedText && trimmedText.length > 0;
-            const hasImage = messageData.image && messageData.image.length > 0;
+            const hasImageFile = !!messageData.imageFile;
 
-            if (!hasText && !hasImage) {
+            if (!hasText && !hasImageFile) {
                 throw new Error("Message must contain either text or image");
             }
 
@@ -219,6 +221,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                 if (textError) throw new Error(textError);
             }
 
+            let imageUrl = "";
+            if (hasImageFile && messageData.imageFile) {
+                // Convert file to dataURL
+                const reader = new FileReader();
+                const fileReadPromise = new Promise<string>((resolve) => {
+                    reader.onload = () => resolve(reader.result as string);
+                });
+                reader.readAsDataURL(messageData.imageFile);
+                const dataUrl = await fileReadPromise;
+                imageUrl = (await uploadImage(dataUrl)) || "";
+            }
+
             console.log("Validating message input... OK");
             console.log("Sending message...");
 
@@ -226,7 +240,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
                 senderId: authUser.id,
                 receiverId: selectedUser.id,
                 text: trimmedText || "",
-                image: messageData.image || "",
+                image: imageUrl,
                 createdAt: serverTimestamp(),
             });
             console.log("Message sent successfully!");

@@ -22,9 +22,10 @@ import {
   buildOAuthUserData,
   ensureLoginInput,
   ensureSignupInput,
-  uploadProfilePictureIfNeeded,
+
   withServerTimestamp,
 } from "../utils/auth";
+import { uploadImage } from "../utils/image";
 import { validateUsername } from "../utils/validation";
 import type { UserData } from "../types/global";
 
@@ -161,7 +162,7 @@ export const useAuthStore = create<AuthStore>((set) => {
       const userDoc = await getDoc(userDocRef);
       const currentUserData = userDoc.data() as UserData;
 
-      const profilePictureURL = await uploadProfilePictureIfNeeded(
+      const profilePictureURL = await uploadImage(
         data.profilePicture,
         currentUserData.profilePicture
       );

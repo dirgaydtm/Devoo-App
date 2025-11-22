@@ -25,10 +25,11 @@ const ChatArea = () => {
         setComposerText("");
     }, [selectedUser?.id]);
 
-    const handleSendMessage = async () => {
+    const handleSendMessage = async (imageFile?: File) => {
         const text = composerText.trim();
-        if (!selectedUser || !text || isSendingMessage) return;
-        await sendMessage({ text });
+        if (!selectedUser || isSendingMessage) return;
+        if (!text && !imageFile) return;
+        await sendMessage({ text, imageFile });
         setComposerText("");
     };
 

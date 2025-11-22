@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Loader } from "lucide-react";
 
+
 import type { Message } from "../../types/global";
 import { formatChatTimestamp } from "../../utils/date";
 
@@ -40,7 +41,7 @@ const ChatMessageList = ({ messages, isLoading, authUserId }: ChatMessageListPro
                     <div key={message.id} className={`flex ${isSent ? "justify-end" : "justify-start"}`}>
                         <div
                             className={`
-                                max-w-xs lg:max-w-md rounded-2xl px-4 py-2 shadow-sm
+                                max-w-3xs lg:max-w-md rounded-2xl p-1 shadow-sm
                                 ${isSent
                                     ? "bg-primary text-primary-content rounded-br-none"
                                     : "bg-base-300 text-base-content rounded-bl-none"
@@ -51,22 +52,22 @@ const ChatMessageList = ({ messages, isLoading, authUserId }: ChatMessageListPro
                                 <img
                                     src={message.image}
                                     alt="message"
-                                    className="rounded-lg mb-2 max-w-xs"
+                                    className="rounded-2xl max-w-full"
                                     crossOrigin="anonymous"
                                 />
                             )}
                             {message.text && (
-                                <p className="wrap-break-word">
-                                    {message.text.split('\n').map((line, idx) => (
-                                        <span key={idx}>
+                                <p className= "text-sm lg:text-lg wrap-break-word m-1">
+                                    {message.text.split("\n").map((line, idx, arr) => (
+                                        <>
                                             {line}
-                                            <br />
-                                        </span>
+                                            {idx < arr.length - 1 && <br />}
+                                        </>
                                     ))}
                                 </p>
                             )}
                             <p
-                                className={`text-xs mt-1 ${isSent ? "text-primary-content/70" : "text-base-content/60"
+                                className={`text-xs lg:text-sm m-1 ${isSent ? "text-primary-content/70 text-end" : "text-base-content/60"
                                     }`}
                             >
                                 {formatChatTimestamp(message.createdAt)}
