@@ -1,9 +1,10 @@
 import { Loader, CircleUserRound, LogOut, PanelRightOpen, HomeIcon, PanelRightClose } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../store/useAuthStore";
-import { useChatStore } from "../../store/useChatStore";
-import { useLayoutStore } from "../../store/useLayoutStore";
-import { getUserInitials } from "../../lib/user";
+
+import InitialAvatar from "./InitialAvatar";
+import { useAuthStore } from "../store/useAuthStore";
+import { useChatStore } from "../store/useChatStore";
+import { useLayoutStore } from "../store/useLayoutStore";
 
 const Sidebar = () => {
     const { logout } = useAuthStore();
@@ -32,8 +33,8 @@ const Sidebar = () => {
             <label htmlFor="sidebar-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-18 is-drawer-open:w-80">
                 {/* Navigation Menu */}
-                <ul className="menu w-full p-2">
-                    <div className="flex px-2 py-4 items-center justify-between w-full">
+                <ul className="menu w-full">
+                    <div className="flex p-2 items-center justify-between w-full">
                         <span className="is-drawer-close:hidden font-semibold">Devoo</span>
                         <label htmlFor="sidebar-drawer"
                             className="is-drawer-close:hidden hidden items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 md:flex"
@@ -84,7 +85,7 @@ const Sidebar = () => {
                     </li>
                 </ul>
 
-                <div className="divider"></div>
+                <div className="divider my-0"></div>
 
                 {/* Users List */}
                 <ul className="menu w-full grow">
@@ -94,21 +95,17 @@ const Sidebar = () => {
                         </div>
                     ) : users.length === 0 ? (
                         <div className="flex items-center justify-center h-full text-center p-4 is-drawer-close:hidden">
-                            <div>
-                                <p className="text-sm text-base-content/60">No users found</p>
-                            </div>
+                            <p className="text-sm text-base-content/60">No users found</p>
                         </div>
                     ) : (
                         users.map((user) => (
                             <li key={user.id}>
-                                <button onClick={() => handleSelectUser(user)} className={`is-drawer-close:tooltip is-drawer-close:tooltip-right ${selectedUser?.id === user.id ? "active" : ""}`} data-tip={user.username}>
+                                <button onClick={() => handleSelectUser(user)} className={`is-drawer-close:tooltip is-drawer-close:tooltip-right h-12 flex items-center ${selectedUser?.id === user.id ? "active" : ""}`} data-tip={user.username}>
                                     <div className="shrink-0">
                                         {user.profilePicture ? (
-                                            <img src={user.profilePicture} alt={user.username} className="w-8 h-8 rounded-full object-cover" crossOrigin="anonymous" />
+                                            <img src={user.profilePicture} alt={user.username} className="size-8  rounded-full object-cover" crossOrigin="anonymous" />
                                         ) : (
-                                            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-content font-semibold">
-                                                {getUserInitials(user.username)}
-                                            </div>
+                                            <InitialAvatar username={user.username} className="w-10 h-10 text-base" />
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0 is-drawer-close:hidden text-left">

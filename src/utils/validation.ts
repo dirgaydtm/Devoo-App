@@ -1,3 +1,5 @@
+import type { UserData } from "../types/global";
+
 export const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+$/;
     return emailRegex.test(email);
@@ -26,6 +28,18 @@ export const validateUsername = (username: string): string | null => {
 export const validateMessage = (text: string | undefined): string | null => {
     if (!text || text.trim().length === 0) {
         return "Message cannot be empty";
+    }
+    return null;
+};
+
+export const validateProfile = (data: Partial<UserData>) => {
+    if (data.username) {
+        const usernameError = validateUsername(data.username);
+        if (usernameError) return usernameError;
+    }
+    if (data.password) {
+        const passwordError = validatePassword(data.password);
+        if (passwordError) return passwordError;
     }
     return null;
 };

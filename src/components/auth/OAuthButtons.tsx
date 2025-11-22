@@ -2,7 +2,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 
 const OAuthButtons = () => {
-    const { loginWithGoogle, loginWithGithub, isLoggingIn, isSigningUp } = useAuthStore();
+    const { loginWithOAuth, isLoggingIn, isSigningUp } = useAuthStore();
     const isLoading = isLoggingIn || isSigningUp;
 
     return (
@@ -14,7 +14,7 @@ const OAuthButtons = () => {
             <div className="flex gap-3">
                 <button
                     type="button"
-                    onClick={loginWithGoogle}
+                    onClick={() => loginWithOAuth("google")}
                     disabled={isLoading}
                     className="btn btn-outline border-base-content/40 hover:border-none hover:bg-primary flex-1 gap-2"
                 >
@@ -23,7 +23,7 @@ const OAuthButtons = () => {
                 </button>
                 <button
                     type="button"
-                    onClick={loginWithGithub}
+                    onClick={() => loginWithOAuth("github")}
                     disabled={isLoading}
                     className="btn btn-outline border-base-content/40 hover:border-none hover:bg-primary flex-1 gap-2"
                 >

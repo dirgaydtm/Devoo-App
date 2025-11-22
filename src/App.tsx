@@ -1,21 +1,19 @@
 import { Routes, Route, Navigate } from "react-router-dom"
+import { Toaster } from "react-hot-toast"
+
 import Auth from "./pages/Auth"
 import Home from "./pages/Home"
 import Profile from "./pages/Profile"
-import { useAuthStore } from "./store/useAuthStore"
-import { setupAuthListener } from "./lib/auth"
-import { useEffect } from "react"
-import { Toaster } from "react-hot-toast"
-import { useThemeStore } from "./store/useThemeStore"
 import Loader from "./components/Loader"
+import { useAuthStore } from "./store/useAuthStore"
+import { useThemeStore } from "./store/useThemeStore"
+import { useAuthListener } from "./hooks/useAuthListener"
 
 const App = () => {
   const { authUser, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
 
-  useEffect(() => {
-    setupAuthListener();
-  }, []);
+  useAuthListener();
 
   if (isCheckingAuth && !authUser) {
     return <div className="flex items-center justify-center h-screen">

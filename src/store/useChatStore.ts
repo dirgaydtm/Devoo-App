@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../lib/firebase";
-import { validateMessage } from "../lib/validation";
+import { validateMessage } from "../utils/validation";
 import type { Message, User } from "../types/global";
 import { useAuthStore } from "./useAuthStore";
 

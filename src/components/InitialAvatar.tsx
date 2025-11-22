@@ -1,15 +1,22 @@
-import { useAuthStore } from "../store/useAuthStore"
-import { getUserInitials } from "../lib/user"
+import { getUserInitials } from "../utils/user";
 
-const Avatar = () => {
-    const { authUser } = useAuthStore();
-    const initial = getUserInitials(authUser?.username)
-
-    return (
-        <div className="size-full rounded-full text-5xl bg-linear-to-r from-primary to-secondary flex items-center justify-center font-bold shadow-md">
-            {initial}
-        </div>
-    )
+interface InitialAvatarProps {
+    username?: string;
+    className?: string;
 }
 
-export default Avatar
+const InitialAvatar = ({ username, className = "" }: InitialAvatarProps) => {
+
+    const initials = getUserInitials(username ?? "");
+
+    return (
+        <div
+            className={`inline-flex aspect-square items-center justify-center rounded-full bg-linear-to-r from-primary to-secondary text-primary-content font-bold uppercase tracking-wide shadow-md select-none ${className}`}
+            aria-label={username || "Anonymous user"}
+        >
+            {initials}
+        </div>
+    );
+};
+
+export default InitialAvatar;

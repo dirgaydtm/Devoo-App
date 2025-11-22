@@ -24,8 +24,8 @@ import {
   ensureSignupInput,
   uploadProfilePictureIfNeeded,
   withServerTimestamp,
-} from "../lib/authHelpers";
-import { validateUsername } from "../lib/validation";
+} from "../utils/auth";
+import { validateUsername } from "../utils/validation";
 import type { UserData } from "../types/global";
 
 interface AuthStore {
@@ -37,14 +37,15 @@ interface AuthStore {
   signup: (data: UserData) => Promise<void>;
   logout: () => Promise<void>;
   login: (data: UserData) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
-  loginWithGithub: () => Promise<void>;
+  loginWithOAuth: (provider: "google" | "github") => Promise<void>;
   updateProfile: (data: UserData) => Promise<void>;
 }
 
 export type { UserData };
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set) => {
+
+  return {
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
@@ -215,97 +216,41 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  // Login with Google
-  loginWithGoogle: async () => {
+    loginWithOAuth : async (providerType: "google" | "github") => {
     set({ isLoggingIn: true });
+    const providerLabel = providerType === "google" ? "Google" : "GitHub";
     try {
-      const provider = new GoogleAuthProvider();
+      const provider =
+        providerType === "google" ? new GoogleAuthProvider() : new GithubAuthProvider();
+
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if user document exists in Firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
 
-      // If new user, create document
       if (!userDoc.exists()) {
         const userData = buildOAuthUserData(user);
-
         await setDoc(userDocRef, withServerTimestamp(userData));
-
-        // Set auth user in store
-        set({
-          authUser: buildAuthStoreUser(user.uid, userData),
-        });
-
+        set({ authUser: buildAuthStoreUser(user.uid, userData) });
         toast.success("Account created successfully!");
       } else {
-        // Get existing user data
         const existingUserData = userDoc.data() as UserData;
-
-        // Set auth user in store
-        set({
-          authUser: buildAuthStoreUser(user.uid, existingUserData),
-        });
-
+        set({ authUser: buildAuthStoreUser(user.uid, existingUserData) });
         toast.success("Logged in successfully");
       }
     } catch (error: unknown) {
-      console.error("Error logging in with Google:", error);
+      console.error(`Error logging in with ${providerLabel}:`, error);
       const errorMessage =
         error instanceof Error
           ? error.message
-          : "Failed to login with Google";
+          : `Failed to login with ${providerLabel}`;
       toast.error(errorMessage);
     } finally {
       set({ isLoggingIn: false });
     }
   },
 
-  // Login with GitHub
-  loginWithGithub: async () => {
-    set({ isLoggingIn: true });
-    try {
-      const provider = new GithubAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
 
-      // Check if user document exists in Firestore
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      // If new user, create document
-      if (!userDoc.exists()) {
-        const userData = buildOAuthUserData(user);
-
-        await setDoc(userDocRef, withServerTimestamp(userData));
-
-        // Set auth user in store
-        set({
-          authUser: buildAuthStoreUser(user.uid, userData),
-        });
-
-        toast.success("Account created successfully!");
-      } else {
-        // Get existing user data
-        const existingUserData = userDoc.data() as UserData;
-
-        // Set auth user in store
-        set({
-          authUser: buildAuthStoreUser(user.uid, existingUserData),
-        });
-
-        toast.success("Logged in successfully");
-      }
-    } catch (error: unknown) {
-      console.error("Error logging in with GitHub:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to login with GitHub";
-      toast.error(errorMessage);
-    } finally {
-      set({ isLoggingIn: false });
-    }
-  },
-}));
+  };
+});
