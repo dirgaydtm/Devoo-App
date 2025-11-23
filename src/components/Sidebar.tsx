@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import InitialAvatar from "./InitialAvatar";
 import { useAuthStore } from "../store/useAuthStore";
-import { useChatStore } from "../store/useChatStore";
+import { useContactStore } from "../store/useContactStore";
+import { useMessageStore } from "../store/useMessageStore";
 import { useLayoutStore } from "../store/useLayoutStore";
 
 const Sidebar = () => {
@@ -13,12 +14,11 @@ const Sidebar = () => {
     const navigate = useNavigate();
     const {
         users,
-        selectedUser,
         isUsersLoading,
-        setSelectedUser,
         addContact,
         isAddingContact,
-    } = useChatStore();
+    } = useContactStore();
+    const { selectedUser, setSelectedUser } = useMessageStore();
     const { setSidebarOpen } = useLayoutStore();
 
     const handleSelectUser = (user: typeof users[0]) => {

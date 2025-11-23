@@ -3,9 +3,11 @@ import toast from "react-hot-toast";
 
 import { fileToBase64 } from "../utils/file";
 import { useAuthStore } from "../store/useAuthStore";
+import { useProfileStore } from "../store/useProfileStore";
 
 export const useProfileEditor = () => {
-    const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+    const { authUser } = useAuthStore();
+    const { isUpdatingProfile, updateProfile } = useProfileStore();
     const [usernameDraft, setUsernameDraft] = useState(authUser?.username || "");
     const [tempProfileImage, setTempProfileImage] = useState(authUser?.profilePicture || "");
 

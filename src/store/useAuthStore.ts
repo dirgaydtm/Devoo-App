@@ -13,7 +13,6 @@ import {
   doc,
   setDoc,
   getDoc,
-  updateDoc,
 } from "firebase/firestore";
 
 import { auth, db } from "../lib/firebase";
@@ -25,32 +24,25 @@ import {
 
   withServerTimestamp,
 } from "../utils/auth";
-import { uploadImage } from "../utils/image";
-import { validateUsername } from "../utils/validation";
 import type { UserData } from "../types/global";
 
 interface AuthStore {
   authUser: UserData | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
-  isUpdatingProfile: boolean;
   isCheckingAuth: boolean;
   signup: (data: UserData) => Promise<void>;
   logout: () => Promise<void>;
   login: (data: UserData) => Promise<void>;
   loginWithOAuth: (provider: "google" | "github") => Promise<void>;
-  updateProfile: (data: UserData) => Promise<void>;
 }
 
 export type { UserData };
 
-export const useAuthStore = create<AuthStore>((set) => {
-
-  return {
+export const useAuthStore = create<AuthStore>((set) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
-  isUpdatingProfile: false,
   isCheckingAuth: true,
 
   // Signup Action
@@ -142,82 +134,7 @@ export const useAuthStore = create<AuthStore>((set) => {
     }
   },
 
-  // Update Profile Action
-  updateProfile: async (data: UserData) => {
-    set({ isUpdatingProfile: true });
-    try {
-      const currentUser = auth.currentUser;
-      if (!currentUser) throw new Error("No user logged in");
-
-      // Validate username if provided
-      if (data.username) {
-        const usernameError = validateUsername(data.username);
-        if (usernameError) throw new Error(usernameError);
-      }
-
-      console.log("Validating profile update input... OK");
-
-      // Get current user data from Firestore
-      const userDocRef = doc(db, "users", currentUser.uid);
-      const userDoc = await getDoc(userDocRef);
-      const currentUserData = userDoc.data() as UserData;
-
-      const profilePictureURL = await uploadImage(
-        data.profilePicture,
-        currentUserData.profilePicture
-      );
-
-      // Prepare update data - only include defined values
-      const updateData: Partial<UserData> = {};
-
-      if (data.username !== undefined) {
-        updateData.username = data.username;
-      }
-
-      if (profilePictureURL !== undefined) {
-        updateData.profilePicture = profilePictureURL;
-      }
-
-      // Update Firestore only if there's data to update
-      if (Object.keys(updateData).length > 0) {
-        await updateDoc(userDocRef, updateData);
-      }
-
-      // Update Firebase Auth profile
-      const authUpdateData: { displayName?: string; photoURL?: string } = {};
-      if (data.username !== undefined) {
-        authUpdateData.displayName = data.username;
-      }
-      if (profilePictureURL !== undefined) {
-        authUpdateData.photoURL = profilePictureURL;
-      }
-
-      if (Object.keys(authUpdateData).length > 0) {
-        await firebaseUpdateProfile(currentUser, authUpdateData);
-      }
-
-      // Get updated user data
-      const updatedUserDoc = await getDoc(userDocRef);
-      const updatedUserData = updatedUserDoc.data() as UserData;
-
-      set({
-        authUser: buildAuthStoreUser(currentUser.uid, updatedUserData),
-      });
-
-      toast.success("Profile updated successfully");
-    } catch (error: unknown) {
-      console.error("Error updating profile:", error);
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Error updating profile";
-      toast.error(errorMessage);
-    } finally {
-      set({ isUpdatingProfile: false });
-    }
-  },
-
-    loginWithOAuth : async (providerType: "google" | "github") => {
+  loginWithOAuth: async (providerType: "google" | "github") => {
     set({ isLoggingIn: true });
     const providerLabel = providerType === "google" ? "Google" : "GitHub";
     try {
@@ -251,7 +168,4 @@ export const useAuthStore = create<AuthStore>((set) => {
       set({ isLoggingIn: false });
     }
   },
-
-
-  };
-});
+}));

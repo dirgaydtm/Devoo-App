@@ -4,21 +4,21 @@ import ChatHeader from "./ChatHeader";
 import ChatMessageList from "./ChatMessageList";
 import ChatEmptyState from "./ChatEmptyState";
 import ChatComposer from "./ChatComposer";
-import { useChatStore } from "../../store/useChatStore";
+import { useContactStore } from "../../store/useContactStore";
+import { useMessageStore } from "../../store/useMessageStore";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const ChatArea = () => {
     const { authUser } = useAuthStore();
+    const { users, isUsersLoading } = useContactStore();
     const {
         selectedUser,
-        users,
-        isUsersLoading,
         messages,
         isMessagesLoading,
         isSendingMessage,
         sendMessage,
         setSelectedUser,
-    } = useChatStore();
+    } = useMessageStore();
     const [composerText, setComposerText] = useState("");
 
     useEffect(() => {
