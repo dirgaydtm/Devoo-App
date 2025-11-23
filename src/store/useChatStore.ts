@@ -141,7 +141,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     subscribeToContacts: (): (() => void) | null => {
         const authUser = useAuthStore.getState().authUser;
 
-        if (!authUser) {
+        if (!authUser || !authUser.id) {
             console.warn("No authenticated user for subscribeToContacts");
             return null;
         }
@@ -198,7 +198,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     addContact: async (email: string) => {
         const authUser = useAuthStore.getState().authUser;
 
-        if (!authUser) {
+        if (!authUser || !authUser.id) {
             toast.error("You must be logged in to add contacts");
             return;
         }
