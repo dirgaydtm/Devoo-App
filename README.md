@@ -1,3 +1,9 @@
+
+<div>
+  <img alt="logo" src="src/assets/Devoo.svg" height="200" />
+  <img alt="preview" src="src/assets/image.png" height="200" />
+</div>
+
 # Devoo Chat App 🔥
 
 A modern, real-time chat application built with **React**, **TypeScript**, and **Firebase**.
@@ -16,7 +22,7 @@ A modern, real-time chat application built with **React**, **TypeScript**, and *
 
 ## 🛠️ Tech Stack
 
-  <img style="align:center" src="https://skillicons.dev/icons?i=ts,react,tailwind,firebase,vite,vercel" alt="Tech Stack" />
+  <img src="https://skillicons.dev/icons?i=ts,react,tailwind,firebase,vite,vercel" alt="Tech Stack" />
 
 - **Frontend Framework**: ![React.js](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=white&logoWidth=12) + ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white&logoWidth=12)
 - **State Management**: ![Zustand](https://img.shields.io/badge/Zustand-000000?style=flat&logo=zustand&logoColor=white&logoWidth=12)
