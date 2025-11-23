@@ -15,22 +15,22 @@ const App = () => {
 
   useAuthListener();
 
-  if (isCheckingAuth && !authUser) {
-    return <div className="flex items-center justify-center h-screen">
-      <Loader />
-    </div>
-  }
+
 
   return (
     <div data-theme={theme}>
-      <Routes>
-        <Route path="/" element={authUser ? <Home /> : <Navigate to="/auth" />} />
-        <Route path="/auth" element={!authUser ? <Auth /> : <Navigate to="/" />} />
-        <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/auth" />} />
-      </Routes>
-
+      {isCheckingAuth && !authUser ? (
+        <div className="flex items-center justify-center h-screen">
+          <Loader />
+        </div>
+      ) :
+        <Routes>
+          <Route path="/" element={authUser ? <Home /> : <Navigate to="/auth" />} />
+          <Route path="/auth" element={!authUser ? <Auth /> : <Navigate to="/" />} />
+          <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/auth" />} />
+        </Routes>
+      }
       <Toaster />
-
     </div>
   )
 }

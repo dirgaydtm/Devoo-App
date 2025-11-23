@@ -3,6 +3,7 @@ import { Loader, CircleUserRound, LogOut, PanelRightOpen, HomeIcon, PanelRightCl
 import { Link, useNavigate } from "react-router-dom";
 
 import InitialAvatar from "./InitialAvatar";
+import Logo from "./Logo";
 import { useAuthStore } from "../store/useAuthStore";
 import { useContactStore } from "../store/useContactStore";
 import { useMessageStore } from "../store/useMessageStore";
@@ -44,8 +45,8 @@ const Sidebar = () => {
             <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-18 is-drawer-open:w-80">
                 {/* Navigation Menu */}
                 <ul className="menu w-full">
-                    <div className="flex gap-2 justify-center is-drawer-open:justify-between items-center w-full">
-                        <span className="is-drawer-close:hidden font-semibold">Devoo</span>
+                    <div className="flex gap-2 justify-center is-drawer-open:justify-between items-center h-16 w-full">
+                        <span className="is-drawer-close:hidden font-extrabold flex text-lg justify-center items-center"><Logo className="size-9 m-2"/><p className="text-secondary">De</p><p className="text-primary">voo</p></span>
                         <label htmlFor="sidebar-drawer"
                             className="is-drawer-close:hidden hidden items-center justify-center size-11 rounded-full cursor-pointer hover:bg-white/10 md:flex">
                             <PanelRightOpen />
@@ -59,7 +60,7 @@ const Sidebar = () => {
                     <li>
                         <Link to="/" onClick={handleGoHome} className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Home">
                             <div className="shrink-0">
-                                <div className="w-8 h-8 flex items-center justify-center text-primary-content">
+                                <div className="w-8 h-8 flex items-center justify-center">
                                     <HomeIcon className="w-6 h-6" />
                                 </div>
                             </div>
@@ -71,7 +72,7 @@ const Sidebar = () => {
                     <li>
                         <Link to="/profile" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Profile">
                             <div className="shrink-0">
-                                <div className="w-8 h-8 flex items-center justify-center text-primary-content">
+                                <div className="w-8 h-8 flex items-center justify-center">
                                     <CircleUserRound className="w-6 h-6" />
                                 </div>
                             </div>
@@ -83,7 +84,7 @@ const Sidebar = () => {
                     <li>
                         <button onClick={logout} className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Logout">
                             <div className="shrink-0">
-                                <div className="w-8 h-8 flex items-center justify-center text-primary-content">
+                                <div className="w-8 h-8 flex items-center justify-center">
                                     <LogOut className="w-6 h-6" />
                                 </div>
                             </div>

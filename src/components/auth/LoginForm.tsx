@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
-import { Eye, EyeOff, LockKeyhole, Mail, MessageSquare } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import OAuthButtons from "./OAuthButtons";
+import Logo from "../Logo";
 
 interface LoginFormProps {
     onSwitchToSignup: () => void;
@@ -24,8 +25,9 @@ const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
         <div className="w-xs md:w-md space-y-6">
             {/* Logo */}
             <div className="flex flex-col items-center gap-1 text-center">
-                <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <MessageSquare className="size-6 text-primary" />
+                <div className="group flex flex-col items-center gap-2 ">
+                    <Logo className="size-12 p-2 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-transform duration-300" />
+                    <span className="flex-row font-bold hidden group-hover:flex transition-transform duration-300"><p className="text-secondary">De</p><p className="text-primary">voo</p></span>
                 </div>
                 <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
                 <p className="text-sm text-base-content/60">Login to your account</p>

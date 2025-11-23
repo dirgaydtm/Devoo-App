@@ -107,7 +107,7 @@ export const useContactStore = create<ContactStore>((set, get) => ({
             // Validate email
             if (!email || !email.trim()) {
                 throw new Error("Email is required");
-            }
+            } 
 
             const trimmedEmail = email.trim().toLowerCase();
             if (!validateEmail(trimmedEmail)) {

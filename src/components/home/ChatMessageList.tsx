@@ -44,7 +44,7 @@ const ChatMessageList = ({ messages, isLoading, authUserId }: ChatMessageListPro
                                 max-w-3xs lg:max-w-md rounded-2xl p-1 shadow-sm
                                 ${isSent
                                     ? "bg-primary text-primary-content rounded-br-none"
-                                    : "bg-base-300 text-base-content rounded-bl-none"
+                                    : "bg-secondary text-secondary-content rounded-bl-none"
                                 }
                             `}
                         >
@@ -67,7 +67,7 @@ const ChatMessageList = ({ messages, isLoading, authUserId }: ChatMessageListPro
                                 </p>
                             )}
                             <p
-                                className={`text-xs lg:text-sm m-1 ${isSent ? "text-primary-content/70 text-end" : "text-base-content/60"
+                                className={`text-xs lg:text-sm m-1 ${isSent ? "text-primary-content/70 text-end" : "text-secondary-content/60"
                                     }`}
                             >
                                 {formatChatTimestamp(message.createdAt)}
