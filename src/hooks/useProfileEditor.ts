@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useState, useCallback, type ChangeEvent } from "react";
 import toast from "react-hot-toast";
 
 import { fileToBase64 } from "../utils/file";
@@ -16,7 +16,7 @@ export const useProfileEditor = () => {
         setTempProfileImage(authUser?.profilePicture || "");
     }, [authUser?.username, authUser?.profilePicture]);
 
-    const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
         try {
@@ -27,9 +27,9 @@ export const useProfileEditor = () => {
             console.error("Error uploading profile image:", error);
             toast.error("Failed to upload profile picture");
         }
-    };
+    }, [updateProfile]);
 
-    const handleResetProfilePicture = async () => {
+    const handleResetProfilePicture = useCallback(async () => {
         try {
             await updateProfile({ profilePicture: "" });
             setTempProfileImage("");
@@ -37,9 +37,9 @@ export const useProfileEditor = () => {
             console.error("Error resetting profile picture:", error);
             toast.error("Failed to reset profile picture");
         }
-    };
+    }, [updateProfile]);
 
-    const handleUsernameBlur = async () => {
+    const handleUsernameBlur = useCallback(async () => {
         if (!authUser) return;
         const trimmed = usernameDraft.trim();
         if (!trimmed || trimmed === authUser.username) return;
@@ -49,7 +49,7 @@ export const useProfileEditor = () => {
         } catch (error) {
             console.error("Error updating username:", error);
         }
-    };
+    }, [authUser, usernameDraft, updateProfile]);
 
     const profilePhoto = tempProfileImage || authUser?.profilePicture;
 
