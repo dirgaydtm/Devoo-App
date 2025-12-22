@@ -1,7 +1,7 @@
 
 <div>
-  <img alt="logo" src="src/assets/Devoo.svg" height="200" />
-  <img alt="preview" src="src/assets/image.png" height="200" />
+  <img alt="logo" src="public/Devoo.svg" height="200" />
+  <img alt="preview" src="public/Preview2.png" height="200" />
 </div>
 
 # Devoo Chat App 🔥
